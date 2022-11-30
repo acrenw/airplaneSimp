@@ -6,7 +6,8 @@ class Plane {
   PVector airport2;
   float crashFactor; //0-1
   Boolean lightsOn;
-  float 
+  float x;
+  float y;
   
   Plane (String fc, float v, float ft, PVector a1, PVector a2, float cf, Boolean lo) {
     this.flightCode = fc;
@@ -16,6 +17,8 @@ class Plane {
     this.airport2 = a2;
     this.crashFactor = cf;
     this.lightsOn = lo;
+    float x = a1.x;
+    float y = a1.y;
   }
 
   void speedChange() {
