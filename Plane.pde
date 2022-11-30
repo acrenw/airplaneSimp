@@ -23,5 +23,10 @@ class Plane {
   void directionChange() {
   }
   
+  void takeoff() {
+  }
+  
+  void land() {
+  }
   
 }
