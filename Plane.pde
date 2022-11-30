@@ -6,6 +6,7 @@ class Plane {
   PVector airport2;
   float crashFactor; //0-1
   Boolean lightsOn;
+  float 
   
   Plane (String fc, float v, float ft, PVector a1, PVector a2, float cf, Boolean lo) {
     this.flightCode = fc;
@@ -24,6 +25,7 @@ class Plane {
   }
   
   void takeoff() {
+    image(plane, this.x, this.y);
   }
   
   void land() {
