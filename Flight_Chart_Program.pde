@@ -20,13 +20,10 @@ void draw(){
   rect(airport1.location.x,airport1.location.y,5,5);  
   fill(255,0,0);
   println(crashProb,"",exwidth,"",crashFactor);
-  rect(50+xx,300,30,30);
+  rect(xx,300,30,30);
   xx+=0.5;
   checkCrash();
-  if(exwidth>=20){
-    exwidth=0;
-    crashFactor=0.01;
-  }
+  explosionAftermath();
   
   
 }
@@ -45,7 +42,7 @@ void checkCrash(){
 void drawExplosion(){
 
   //have explosion on screen.
-  float x = 300;
+  float x = xx;
   float y = 300; 
   
   for(int i=0;i<100;i++){
@@ -55,6 +52,16 @@ void drawExplosion(){
     noStroke();
     fill(255,80,0,255-5*exwidth);
     circle(x,y,exwidth);
-
+    
   }   
+}
+
+void explosionAftermath(){
+
+  if(exwidth>=20){
+    exwidth=0;
+    crashFactor=0.01;
+    xx=0;
+  }  
+  
 }
