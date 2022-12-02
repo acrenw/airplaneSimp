@@ -1,7 +1,9 @@
 PImage map;
-float crashFactor=0.01;
+float initalCrashFactor = 0.01;
+float crashFactor=initalCrashFactor;
 float exwidth;
 float xx=0;
+float exTracker = 0;
 float crashProb;
 airport airport1 = new airport("Toronto Pearson",258,252);
 void setup(){
@@ -13,19 +15,23 @@ void setup(){
 
 void draw(){
 
+  noStroke();
   scale(0.8);
   image(map,0,0);
   scale(1.25);
   fill(255,0,0);
   rect(airport1.location.x,airport1.location.y,5,5);  
   fill(255,0,0);
-  println(crashProb,"",exwidth,"",crashFactor);
+  println(crashProb,"",exwidth,"",crashFactor,"",exTracker);
   rect(xx,300,30,30);
   xx+=0.5;
-  checkCrash();
-  explosionAftermath();
-  
-  
+  if(exTracker==0){
+    checkCrash();
+    explosionAftermath();
+  }
+  if(exTracker>0){
+    exTracker--;
+  }
 }
   
 void checkCrash(){
@@ -60,8 +66,9 @@ void explosionAftermath(){
 
   if(exwidth>=20){
     exwidth=0;
-    crashFactor=0.01;
+    crashFactor=initalCrashFactor;
     xx=0;
+    exTracker=100;
   }  
   
 }
