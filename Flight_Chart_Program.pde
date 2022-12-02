@@ -25,14 +25,11 @@ void draw(){
   println(crashProb,"",exwidth,"",crashFactor,"",exTracker);
   rect(xx,300,30,30);
   xx+=0.5;
-  if(exTracker==0){
-    checkCrash();
-    explosionAftermath();
-  }
-  if(exTracker>0){
-    exTracker--;
-  }
+  checkExtracker();
+  resetExTracker();  
 }
+  
+//These function that are related to the crash and everything are to be put in teh plane class.  
   
 void checkCrash(){
   
@@ -69,6 +66,22 @@ void explosionAftermath(){
     crashFactor=initalCrashFactor;
     xx=0;
     exTracker=100;
+  }  
+  
+}
+void checkExtracker(){
+
+  if(exTracker==0){
+    checkCrash();
+    explosionAftermath();
+  }
+  
+}
+
+void resetExTracker(){
+
+  if(exTracker>0){
+    exTracker--;
   }  
   
 }
