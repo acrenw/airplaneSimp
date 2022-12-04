@@ -1,40 +1,22 @@
 //defining time zones
 int n = 5; //numOfBoids  
+//PImage map = loadImage("data/map.jpeg");
 Boid[] boidList = new Boid[n];
 Boid b;
 int clockTimer = 0;
-float UTC = 0;
-float NZDT = abs(UTC - 11);
-float HST = abs(UTC - 10);
-float AKST = abs(UTC - 9);
-float PST = abs(UTC - 8);
-float MST = abs(UTC - 7);
-float CST = abs(UTC - 6);
-float EST = abs(UTC - 5);
-float AST = abs(UTC - 4);
-float NST = abs(UTC - 3);
-float GST = abs(UTC - 2);
-float CVT = abs(UTC - 1);
-float CET = abs(UTC + 1);
-float EET = abs(UTC + 2);
-float MSK = abs(UTC + 3);
-float SAMT = abs(UTC + 4);
-float PKT = abs(UTC + 5);
-float ALMT = abs(UTC + 6);
-float ICT = abs(UTC + 7);
-float HKT = abs(UTC + 8);
-float JST = abs(UTC + 9);
-float AEST = abs(UTC + 10);
-float SRET = abs(UTC + 11);
-float ANAT = abs(UTC + 12);
-
-float[] timezones = new float[]{NZDT, HST, AKST, PST, MST, CST, EST, AST, NST, GST, CVT, UTC, CET,
-            EET, MSK, SAMT, PKT, ALMT, ICT, HKT, JST, AEST, SRET, ANAT, ANAT};//second anat to fix colours
+int[] timezones = new int[25];
+float fade = 1;
+//to access what timezone you need, they go from left to right in the array
 String[] colour = {"238,99,98","254,224,144","168,214,150","96,144,159","171,138,193"};
 int colourLoop = 0;
+int minutes = 0;
 
 void setup(){
+  //image(map,0,0);
   size(960,524);
+  for (int i = -11; i < 13; i++){
+    timezones[i+11] = abs(i);
+  }
   for (int i = 0; i < n; i++){
     b = new Boid();
     boidList[i] = b;
@@ -49,9 +31,15 @@ void draw(){
   calculateFlockCentre();
   //moveBoidsToNextPosition();
   clockTimer += 1;
-  if (clockTimer % 50 == 0){
+  if (clockTimer % 5 == 0){
+    minutes += 1;
     for (int i = 0; i < timezones.length; i++){
-     timezones[i] += 1;
+     if (minutes == 60){
+       for (int j = 0; j < timezones.length; j++){
+         timezones[j] += 1;
+       }
+       minutes = 0;
+     }
      if (timezones[i] >= 24){
        timezones[i] = 0;
      }
@@ -60,8 +48,11 @@ void draw(){
   fill(0);
   rect(0, 0, 960, 20);
   rect(0, height, 960, -20);
-  fill(255);
-  text("Your flight has landed at "+ random(0, timezones.length) +"h for a total of __ hours.", 40, 519);
+  //if a flight lands, fade = 1; text("Your flight has landed at"...
+  fade -= 0.01;
+  color c = lerpColor(0, 255, fade);
+  fill(c);
+  text("Your flight has landed at "+ random(0, timezones.length) +"h for a total of __ hours.", 30, 517);
   for (int i = 0; i < timezones.length; i++){
     colourLoop += 1;
     if (colourLoop >= 5){
@@ -75,6 +66,13 @@ void draw(){
     if (i > 24){
       i = 0;
     }
-    text(timezones[i]+"h", ((width/24))*i+5, 15);
+    if (minutes < 10){
+      text(timezones[i]+":0"+minutes+"h", ((width/24))*i+1, 15);
+    }
+    else{
+      text(timezones[i]+":"+minutes+"h", ((width/24))*i+1, 15);
+    }
+    //keeping h and minutes seperate to print easily, take into account
+      //while adding time together
   }
 }
