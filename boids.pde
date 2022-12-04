@@ -1,7 +1,3 @@
-float flockX;
-float flockY;
-PVector flockCentre = new PVector(flockX, flockY);
-
 class Boid{
   //fields
   PVector velocity;
@@ -37,17 +33,4 @@ class Boid{
     //this.v1 += ;, v2, v3;
     
   }
-}
-
-PVector calculateFlockCentre(){ //rule 1
-  for (int i = 0; i < n; i++){
-      b = boidList[i];
-      flockX += b.xPosition;
-      flockY += b.yPosition;
-    }
-  flockX = (flockX / n-1);
-  flockY = (flockY / n-1);
-  
-  flockCentre = new PVector(flockX, flockY);
-  return flockCentre;
 }
