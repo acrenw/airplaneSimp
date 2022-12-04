@@ -6,6 +6,7 @@ float velocity = 60;
 PImage plane;
 float windStrength; //adjusted using GUI, 1-10
 int windTheta; //angle from positive x-axis, in increments of 45
+PVector flyIncr;
 
 float crashFactor;
 float exwidth;
@@ -102,16 +103,14 @@ void draw() {
   mouseHoverCheck(p1);
   
   //-----
-  //fill(255,0,0);
-  //rect(xx,300,30,30);
   //crash if hit bird
   if (p1.hitBird()) { //change for this method to be in brids later
     crashed = checkCrash(p1);
     if (crashed && crashLoop <= 10) { //draws explosion
       exwidth+=10;
       noStroke();
-      fill(255,80,0,255-3*exwidth);
-      circle(p1.x,p1.y,exwidth);
+      fill(255, 80, 0, 255-3*exwidth);
+      circle(p1.x+11, p1.y+11, exwidth);
       stroke(3);
       crashLoop ++;
     }   
@@ -119,11 +118,6 @@ void draw() {
       explosionAftermath(p1);
     }
   } 
-  //println(crashNum,crashFactor);
-  
-  //xx+=0.5;
-  //checkExtracker();
-  //resetExTracker();  
   //-----
   
   for (int i = 0; i < n; i++){
@@ -192,25 +186,14 @@ void mouseHoverCheck(Plane p) {
 }
 
 boolean checkCrash(Plane p){
-  crashNum = 1;//random(0,1);
-  if(true){//crashNum>crashFactor){
+  crashNum = random(0,1);
+  if(crashNum>crashFactor){ //weird bug where ex lags and plane doesnt go back when crash factor is greater than like 0.1
     return true;
-    //drawExplosion(p);
   }
   else {
     return false;
   }
 }
-
-//void drawExplosion(Plane p){
-//  for(int i=0;i<100;i++){
-//    exwidth+=0.25;
-//    noStroke();
-//    fill(255,80,0,255-5*exwidth);
-//    circle(p.x,p.y,exwidth);
-//    stroke(3);
-//  }   
-//}
 
 void explosionAftermath(Plane p){
   exwidth=0;

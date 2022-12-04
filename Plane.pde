@@ -39,35 +39,39 @@ class Plane {
     
     if (this.x != this.destination.location.x && this.y != this.destination.location.y) { //if plane hasnt reached destination (plane is in flight)
       //making wind influence flight path of plane
-      float X = windStrength*sin(windTheta)/sin(90);
-      float Y = sqrt(sq(windStrength)-sq(X));
+      //calculates x and y coordinates of wind vector
+      float windVectorY = abs(windStrength*sin(windTheta)/sin(90));
+      float windVectorX = sqrt(sq(windStrength)-sq(windVectorY));
       if (90 < windTheta && windTheta < 270) {
-        X = X*-1;
+        windVectorX = windVectorX*-1;
       }
       if (0 < windTheta && windTheta < 180) {
-        Y = Y*-1;
+        windVectorY = windVectorY*-1;
       }
       
-      //PVector windSlope = getSlopeFraction(this.y + Y - this.origin.location.y, this.x + X - this.origin.location.x);
-      ////updating the xy values based on resultant vector slope
-      //PVector windRunRise = reduceFraction(int(windSlope.x), int(windSlope.y));
-      //this.x += windRunRise.x;
-      //this.y += windRunRise.y;
-      
-      //getting the values of the numerator and denomintaor of the slope - plane position to destination
-      PVector resultantSlope = getSlopeFraction(this.destination.location.y - this.y, this.destination.location.x - this.x);
-      //updating the xy values based on resultant vector slope
-      PVector resultantRunRise = reduceFraction(int(resultantSlope.x), int(resultantSlope.y));
-      
+      //calculate and update plane path after affected by wind
+      flyIncr = flyIncrement(this.x, this.y, this.destination.location.x + windVectorX, this.destination.location.y + windVectorY); //from plane to resultant vector coordinates
       if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
-        this.x += resultantRunRise.x;
-        this.y += resultantRunRise.y;
+        // update x and y values based on new calculated flight path
+        this.x += flyIncr.x;
+        this.y += flyIncr.y;
+      }
+      
+      //recalculate and update path from plane to destination
+      flyIncr = flyIncrement(this.x, this.y, this.destination.location.x, this.destination.location.y); //from plane to destination
+      if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
+        // update x and y values based on new calculated flight path
+        this.x += flyIncr.x;
+        this.y += flyIncr.y;
       }
     }
     
   }
-
-  PVector getSlopeFraction(float rise, float run) {
+  
+  PVector flyIncrement(float x1, float y1, float x2, float y2) {
+    float rise = y2-y1;
+    float run = x2-x1;
+    
     String slope = nf(rise/run, 0, 2); //calculates slope to 2dp
     int decimalIndex = slope.indexOf(".");
     String decimals = slope.substring(decimalIndex+1, slope.length());
@@ -75,7 +79,7 @@ class Plane {
     int numerator = int(wholeNum)*100 + int(decimals);
     int denominator = 100;
     
-    return new PVector(numerator, denominator);
+    return reduceFraction(numerator, denominator); //returns denominator fist, numerator second
   }
   
   
@@ -113,7 +117,7 @@ class Plane {
   
   //crashing stuff
   boolean hitBird() {
-    if (this.x >= 700) { //change condition later
+    if (this.x >= 500) { //change condition later
       return true;
     }
     else {
