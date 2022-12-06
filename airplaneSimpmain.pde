@@ -5,7 +5,7 @@ PImage map;
 float velocity = 60;
 PImage plane;
 float windStrength; //adjusted using GUI, 1-10
-int windTheta; //angle from positive x-axis, in increments of 45
+float windTheta; //angle from positive x-axis, in increments of 45
 PVector flyIncr;
 
 float crashFactor;
@@ -20,39 +20,6 @@ float flockX;
 float flockY;
 PVector flockCentre = new PVector(flockX, flockY);
 
-//Colour coordinated to map 
-//(pop out window if possible, include each time zone)
-//Use this to calculate 
-//flight time? Since it’s constantly changing
-
-//defining time zones
-float UTC = 0;
-float NZDT = UTC - 11;
-float HST = UTC - 10;
-float AKST = UTC - 9;
-float PST = UTC - 8;
-float MST = UTC - 7;
-float CST = UTC - 6;
-float EST = UTC - 5;
-float AST = UTC - 4;
-float NST = UTC - 3;
-float GST = UTC - 2;
-float CVT = UTC - 1;
-float CET = UTC + 1;
-float EET = UTC + 2;
-float MSK = UTC + 3;
-float SAMT = UTC + 4;
-float PKT = UTC + 5;
-float ALMT = UTC + 6;
-float ICT = UTC + 7;
-float HKT = UTC + 8;
-float JST = UTC + 9;
-float AEST = UTC + 10;
-float SRET = UTC + 11;
-float ANAT = UTC + 12;
-//24
-
-//defining time zones
 int n = 5; //numOfBoids  
 //PImage map = loadImage("data/map.jpeg");
 Boid[] boidList = new Boid[n];
@@ -77,7 +44,7 @@ void setup() {
   frameRate(15);
   
   createGUI();
-  print(width/24); //= 40 pixels for each zone
+  print(width/24); //= 40 pixels for each zone //huh?
   
   map = loadImage("map.JPG");
   plane = loadImage("plane.png");
@@ -91,8 +58,10 @@ void setup() {
     boidList[i] = b;
   }
   
+  //gui stuff
   windStrength = windStrengthControl.getValueF();
   crashFactor = crashFactorControl.getValueF();
+  velocity = planeVelocityControl.getValueF()/100;
 }
 
 void draw() {

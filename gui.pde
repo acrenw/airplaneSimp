@@ -30,33 +30,37 @@ public void windDirAltered(GStick source, GEvent event) { //_CODE_:windDirContro
   }
   
   else if (windDirControl.getPosition() == 1) {
-    windTheta = 315;
+    windTheta = 315 * (PI/180);
   }
   
   else if (windDirControl.getPosition() == 2) {
-    windTheta = 270;
+    windTheta = 270 * (PI/180);
   }
   
   else if (windDirControl.getPosition() == 3) {
-    windTheta = 225;
+    windTheta = 225 * (PI/180);
   }
   else if (windDirControl.getPosition() == 4) {
-    windTheta = 180;
+    windTheta = 180 * (PI/180);
   }
   else if (windDirControl.getPosition() == 5) {
-    windTheta = 135;
+    windTheta = 135 * (PI/180);
   }
   else if (windDirControl.getPosition() == 6) {
-    windTheta = 90;
+    windTheta = 90 * (PI/180);
   }
   else if (windDirControl.getPosition() == 7) {
-    windTheta = 45;
+    windTheta = 45 * (PI/180);
   }
 } //_CODE_:windDirControl:901153:
 
 public void crashFactorControlAltered(GCustomSlider source, GEvent event) { //_CODE_:crashFactorControl:900789:
   crashFactor = crashFactorControl.getValueF();
 } //_CODE_:crashFactorControl:900789:
+
+public void planeVelocityControlAltered(GCustomSlider source, GEvent event) { //_CODE_:planeVelocityControl:475700:
+  velocity = planeVelocityControl.getValueF()/100; //so it goes from 1-10 instead of 100-1000
+} //_CODE_:planeVelocityControl:475700:
 
 
 
@@ -80,7 +84,7 @@ public void createGUI(){
   label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label1.setText("Wind Strength");
   label1.setOpaque(false);
-  windDirControl = new GStick(window1, 124, 87, 60, 60);
+  windDirControl = new GStick(window1, 124, 71, 60, 60);
   windDirControl.setMode(G4P.X8);
   windDirControl.setOpaque(false);
   windDirControl.addEventHandler(this, "windDirAltered");
@@ -97,6 +101,15 @@ public void createGUI(){
   label3.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label3.setText("crash factor");
   label3.setOpaque(false);
+  planeVelocityControl = new GCustomSlider(window1, 93, 224, 100, 40, "grey_blue");
+  planeVelocityControl.setLimits(800.0, 100.0, 1000.0);
+  planeVelocityControl.setNumberFormat(G4P.DECIMAL, 2);
+  planeVelocityControl.setOpaque(false);
+  planeVelocityControl.addEventHandler(this, "planeVelocityControlAltered");
+  label4 = new GLabel(window1, 7, 234, 80, 20);
+  label4.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label4.setText("plane speed mph");
+  label4.setOpaque(false);
   window1.loop();
 }
 
@@ -109,3 +122,5 @@ GStick windDirControl;
 GLabel label2; 
 GCustomSlider crashFactorControl; 
 GLabel label3; 
+GCustomSlider planeVelocityControl; 
+GLabel label4; 

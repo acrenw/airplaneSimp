@@ -40,12 +40,12 @@ class Plane {
     if (this.x != this.destination.location.x && this.y != this.destination.location.y) { //if plane hasnt reached destination (plane is in flight)
       //making wind influence flight path of plane
       //calculates x and y coordinates of wind vector
-      float windVectorY = abs(windStrength*sin(windTheta)/sin(90));
+      float windVectorY = abs(windStrength*sin(windTheta)/sin(90 * (PI/180)));
       float windVectorX = sqrt(sq(windStrength)-sq(windVectorY));
-      if (90 < windTheta && windTheta < 270) {
+      if (90 * (PI/180) < windTheta && windTheta < 270 * (PI/180)) {
         windVectorX = windVectorX*-1;
       }
-      if (0 < windTheta && windTheta < 180) {
+      if (0 * (PI/180) < windTheta && windTheta < 180 * (PI/180)) {
         windVectorY = windVectorY*-1;
       }
       
@@ -61,8 +61,8 @@ class Plane {
       flyIncr = flyIncrement(this.x, this.y, this.destination.location.x, this.destination.location.y); //from plane to destination
       if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
         // update x and y values based on new calculated flight path
-        this.x += flyIncr.x;
-        this.y += flyIncr.y;
+        this.x += flyIncr.x;// + velocity;  //doesn't work when i add this???
+        this.y += flyIncr.y;// + velocity;
       }
     }
     
@@ -75,7 +75,7 @@ class Plane {
     String slope = nf(rise/run, 0, 2); //calculates slope to 2dp
     int decimalIndex = slope.indexOf(".");
     String decimals = slope.substring(decimalIndex+1, slope.length());
-    String wholeNum = slope.substring(0, decimalIndex);
+    String wholeNum = slope.substring(0, decimalIndex); //why does wind dir SW make this go out of range???
     int numerator = int(wholeNum)*100 + int(decimals);
     int denominator = 100;
     
