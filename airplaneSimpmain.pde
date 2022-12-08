@@ -16,16 +16,13 @@ float crashNum;
 boolean crashed;
 int crashLoop = 0;
 
-float flockX;
-float flockY;
-PVector flockCentre = new PVector(flockX, flockY);
-
-int n = 5; //numOfBoids  
-//PImage map = loadImage("data/map.jpeg");
-Boid[] boidList = new Boid[n];
+int numBoids = 5;
+int numGroups = 2;
+Boid[][] boidList = new Boid[numGroups][numBoids];
 Boid b;
-int clockTimer = 0;
-int[] timezones = new int[25];
+Boid b2;
+int birdTimer = 0;
+int clockTimer = 0;int[] timezones = new int[25];
 float fade = 1;
 //to access what timezone you need, they go from left to right in the array
 String[] colour = {"238,99,98","254,224,144","168,214,150","96,144,159","171,138,193"};
@@ -53,9 +50,11 @@ void setup() {
   for (int i = -11; i < 13; i++){
     timezones[i+11] = abs(i);
   }
-  for (int i = 0; i < n; i++){
-    b = new Boid();
-    boidList[i] = b;
+  for (int i = 0; i < numGroups; i++){
+    for (int j = 0; j < numBoids; j++){
+      b2 = new Boid();
+      boidList[i][j] = b2;
+    }
   }
   
   //gui stuff
@@ -89,13 +88,14 @@ void draw() {
   } 
   //-----
   
-  for (int i = 0; i < n; i++){
-    b = boidList[i];
-    b.drawBoids();
-  }
-  calculateFlockCentre();
-  //moveBoidsToNextPosition();
   clockTimer += 1;
+  birdTimer += 1;
+  for (int i = 0; i < numGroups; i++){
+    for (int j = 0; j < numBoids; j++){
+      b2 = boidList[i][j];
+      b2.drawBoids(i);
+    }
+  }
   if (clockTimer % 5 == 0){
     minutes += 1;
     for (int i = 0; i < timezones.length; i++){
@@ -169,18 +169,4 @@ void explosionAftermath(Plane p){
   crashLoop = 0;
   p.resetPlanePosition(p.origin);
   crashed = false;
-}
-
-
-PVector calculateFlockCentre(){ //rule 1
-  for (int i = 0; i < n; i++){
-      b = boidList[i];
-      flockX += b.xPosition;
-      flockY += b.yPosition;
-    }
-  flockX = (flockX / n-1);
-  flockY = (flockY / n-1);
-  
-  flockCentre = new PVector(flockX, flockY);
-  return flockCentre;
 }
