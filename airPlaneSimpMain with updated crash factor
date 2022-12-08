@@ -25,38 +25,14 @@ PVector flockCentre = new PVector(flockX, flockY);
 //Use this to calculate 
 //flight time? Since it’s constantly changing
 
-//defining time zones
-float UTC = 0;
-float NZDT = UTC - 11;
-float HST = UTC - 10;
-float AKST = UTC - 9;
-float PST = UTC - 8;
-float MST = UTC - 7;
-float CST = UTC - 6;
-float EST = UTC - 5;
-float AST = UTC - 4;
-float NST = UTC - 3;
-float GST = UTC - 2;
-float CVT = UTC - 1;
-float CET = UTC + 1;
-float EET = UTC + 2;
-float MSK = UTC + 3;
-float SAMT = UTC + 4;
-float PKT = UTC + 5;
-float ALMT = UTC + 6;
-float ICT = UTC + 7;
-float HKT = UTC + 8;
-float JST = UTC + 9;
-float AEST = UTC + 10;
-float SRET = UTC + 11;
-float ANAT = UTC + 12;
-//24
-
-//defining time zones
-int n = 5; //numOfBoids  
+//defining time and boid variables
+int numBoids = 5;
+int numGroups = 2;
 //PImage map = loadImage("data/map.jpeg");
-Boid[] boidList = new Boid[n];
+Boid[][] boidList = new Boid[numGroups][numBoids];
 Boid b;
+Boid b2;
+int birdTimer = 0;
 int clockTimer = 0;
 int[] timezones = new int[25];
 float fade = 1;
@@ -124,9 +100,14 @@ void draw() {
     b = boidList[i];
     b.drawBoids();
   }
-  calculateFlockCentre();
-  //moveBoidsToNextPosition();
   clockTimer += 1;
+  birdTimer += 1;
+  for (int i = 0; i < numGroups; i++){
+    for (int j = 0; j < numBoids; j++){
+      b2 = boidList[i][j];
+      b2.drawBoids(i);
+    }
+  }
   if (clockTimer % 5 == 0){
     minutes += 1;
     for (int i = 0; i < timezones.length; i++){
