@@ -11,8 +11,8 @@ PVector flyIncr;
 String weather = "Sun";
 float weatherCrashAffectant;
 float pilotCrashAffectant;
-Raindrop[] rain = new Raindrop[500];
-Raindrop[] fog = new Raindrop[5];
+Weather[] particleWeather = new Weather[500];
+Weather[] fog = new Weather[5];
 
 float crashFactor;
 float exwidth;
@@ -53,11 +53,11 @@ void setup() {
   plane = loadImage("plane.png");
   
   //weather stuff
-  for (int i=0; i<rain.length; i++) {
-    rain[i] = new Raindrop(random(width), random(height), random(5));
+  for (int i=0; i<particleWeather.length; i++) {
+    particleWeather[i] = new Weather(random(width), random(height), random(5));
   }
   for (int i=0; i<fog.length; i++) {
-    fog[i] = new Raindrop(random(width), random(height), random(5));
+    fog[i] = new Weather(random(width), random(height), random(5));
   }
   
   //filling timezones and boids array
@@ -104,7 +104,7 @@ void draw() {
     }
   } 
   //-----
-  drawWeather();
+  
   
   clockTimer += 1;
   birdTimer += 1;
@@ -128,6 +128,9 @@ void draw() {
      }
     }
   }
+  
+  drawWeather();
+  
   fill(0);
   rect(0, 0, 960, 20);
   rect(0, height, 960, -20);
@@ -158,6 +161,7 @@ void draw() {
     //keeping h and minutes seperate to print easily, take into account
       //while adding time together
   }
+  
 }
 
 void drawMap() {
@@ -191,18 +195,18 @@ void explosionAftermath(Plane p){
 
 void drawWeather() {
   if (weather == "rain") {
-    for (int i=0; i<rain.length; i++) {
+    for (int i=0; i<particleWeather.length; i++) {
       stroke(100, 180, 255);
-      rain[i].display("rain");
-      rain[i].update();
+      particleWeather[i].display("rain");
+      particleWeather[i].update("rain");
       noStroke();
     }           
   }
   else if (weather == "snow") {
-    for (int i=0; i<rain.length; i++) {
+    for (int i=0; i<particleWeather.length; i++) {
       stroke(255);
-      rain[i].display("snow");
-      rain[i].update();
+      particleWeather[i].display("snow");
+      particleWeather[i].update("snow");
       noStroke();
     }
   }
@@ -211,7 +215,7 @@ void drawWeather() {
       noStroke();
       fill(255, 100);
       fog[i].display("fog");
-      fog[i].update();
+      fog[i].update("fog");
     }
   }
 }
