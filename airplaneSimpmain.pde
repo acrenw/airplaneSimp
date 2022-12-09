@@ -12,6 +12,7 @@ String weather = "Sun";
 float weatherCrashAffectant;
 float pilotCrashAffectant;
 Raindrop[] rain = new Raindrop[500];
+Raindrop[] fog = new Raindrop[5];
 
 float crashFactor;
 float exwidth;
@@ -38,7 +39,7 @@ int minutes = 0;
 Airport a1 = new Airport("Toronto Pearson", 220, 220);
 Airport a2 = new Airport("Beijing Airport", 750, 250);
 
-Plane p1 = new Plane("ACA 014", velocity, 6.5, a1, a2, 0.1, false);
+Plane p1 = new Plane("AC 014", velocity, 6.5, a1, a2, 0.1, false);
 
 void setup() {
   size(960, 504);
@@ -54,6 +55,9 @@ void setup() {
   //weather stuff
   for (int i=0; i<rain.length; i++) {
     rain[i] = new Raindrop(random(width), random(height), random(5));
+  }
+  for (int i=0; i<fog.length; i++) {
+    fog[i] = new Raindrop(random(width), random(height), random(5));
   }
   
   //filling timezones and boids array
@@ -77,17 +81,17 @@ void setup() {
 
 void draw() {
   drawMap();
-  drawWeather();
   a1.display();
   a2.display();
   p1.display();
   mouseHoverCheck(p1);
   
+  
   //-----
   //crash if hit bird
   if (p1.hitBird()) { //change for this method to be in brids later
     crashed = checkCrash(p1);
-    if (crashed && crashLoop <= 10) { //draws explosion
+    if (crashed && crashLoop <= 10) { //draws explosion, change to make it have fire and smoke
       exwidth+=10;
       noStroke();
       fill(255, 80, 0, 255-3*exwidth);
@@ -100,6 +104,7 @@ void draw() {
     }
   } 
   //-----
+  drawWeather();
   
   clockTimer += 1;
   birdTimer += 1;
@@ -202,5 +207,11 @@ void drawWeather() {
     }
   }
   else if (weather == "fog") {
+    for (int i=0; i<fog.length; i++) {
+      noStroke();
+      fill(255, 100);
+      fog[i].display("fog");
+      fog[i].update();
+    }
   }
 }

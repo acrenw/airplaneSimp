@@ -31,5 +31,8 @@ class Raindrop {
       strokeWeight(rainThickness*2);
       point(x, y);
     }
+    else if (type == "fog") {
+      circle(x, y, 400);
+    }
   }
 }
