@@ -54,13 +54,55 @@ public void windDirAltered(GStick source, GEvent event) { //_CODE_:windDirContro
   }
 } //_CODE_:windDirControl:901153:
 
-public void crashFactorControlAltered(GCustomSlider source, GEvent event) { //_CODE_:crashFactorControl:900789:
-  crashFactor = crashFactorControl.getValueF();
-} //_CODE_:crashFactorControl:900789:
-
 public void planeVelocityControlAltered(GCustomSlider source, GEvent event) { //_CODE_:planeVelocityControl:475700:
   velocity = planeVelocityControl.getValueF()/100; //so it goes from 1-10 instead of 100-1000
 } //_CODE_:planeVelocityControl:475700:
+
+public void sunWeatherSelected(GButton source, GEvent event) { //_CODE_:sunWeather:346343:
+  weather = "sun";
+  weatherCrashAffectant = 0;
+} //_CODE_:sunWeather:346343:
+
+public void rainWeatherSelected(GButton source, GEvent event) { //_CODE_:rainWeather:817540:
+  weather = "rain";
+  weatherCrashAffectant = 0.2;
+} //_CODE_:rainWeather:817540:
+
+public void snowWeatherSelected(GButton source, GEvent event) { //_CODE_:snowWeather:321821:
+  weather = "snow"; 
+  weatherCrashAffectant = 0.1;
+} //_CODE_:snowWeather:321821:
+
+public void fogWeatherSelected(GButton source, GEvent event) { //_CODE_:fogWeather:763499:
+  weather = "fog";
+  weatherCrashAffectant = 0.1;
+} //_CODE_:fogWeather:763499:
+
+public void textarea1_change1(GTextArea source, GEvent event) { //just for looks
+ println("textarea1_change1 - GCheckbox >> GEvent." + event + " @ " + millis());
+} //_CODE_:textarea1:386910:
+
+public void playButtonClicked(GButton source, GEvent event) { //_CODE_:playButton:474749:
+  if (playButton.getText() == "Pause") {
+    noLoop();
+    playButton.setText("Play");
+  }
+  else if (playButton.getText() == "Play") {
+    loop();
+    playButton.setText("Pause");
+  }
+} //_CODE_:playButton:474749:
+
+public void engineFailureCheckboxClicked(GCheckbox source, GEvent event) { //_CODE_:engineFailureCheckbox:340575:
+  //rename to bad pilot checkbox
+  pilotCrashAffectant = 0.2;
+} //_CODE_:engineFailureCheckbox:340575:
+
+public void crashFactorTextEntered(GTextField source, GEvent event) { //_CODE_:crashFactorText:651401:
+  if (int(crashFactorText.getText()) >= 1 && int(crashFactorText.getText()) <= 10) {
+    crashFactor = float(crashFactorText.getText())/10;
+  }
+} //_CODE_:crashFactorText:651401:
 
 
 
@@ -71,45 +113,77 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setMouseOverEnabled(false);
   surface.setTitle("Sketch Window");
-  window1 = GWindow.getWindow(this, "Window title", 0, 0, 240, 300, JAVA2D);
+  window1 = GWindow.getWindow(this, "Window title", 0, 0, 500, 500, JAVA2D);
   window1.noLoop();
   window1.setActionOnClose(G4P.KEEP_OPEN);
   window1.addDrawHandler(this, "win_draw1");
-  windStrengthControl = new GCustomSlider(window1, 90, 12, 100, 40, "grey_blue");
+  windStrengthControl = new GCustomSlider(window1, 370, 130, 100, 40, "purple18px");
   windStrengthControl.setLimits(1.0, 0.0, 10.0);
   windStrengthControl.setNumberFormat(G4P.DECIMAL, 2);
   windStrengthControl.setOpaque(false);
   windStrengthControl.addEventHandler(this, "windStrengthControlAltered");
-  label1 = new GLabel(window1, -6, 21, 80, 20);
+  label1 = new GLabel(window1, 280, 140, 80, 20);
   label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label1.setText("Wind Strength");
   label1.setOpaque(false);
-  windDirControl = new GStick(window1, 124, 71, 60, 60);
+  windDirControl = new GStick(window1, 350, 210, 60, 80);
   windDirControl.setMode(G4P.X8);
+  windDirControl.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   windDirControl.setOpaque(false);
   windDirControl.addEventHandler(this, "windDirAltered");
-  label2 = new GLabel(window1, 25, 108, 80, 20);
+  label2 = new GLabel(window1, 340, 180, 80, 20);
   label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label2.setText("wind direction");
+  label2.setText("Wind Direction");
   label2.setOpaque(false);
-  crashFactorControl = new GCustomSlider(window1, 85, 163, 100, 40, "grey_blue");
-  crashFactorControl.setLimits(0.5, 0.0, 1.0);
-  crashFactorControl.setNumberFormat(G4P.DECIMAL, 2);
-  crashFactorControl.setOpaque(false);
-  crashFactorControl.addEventHandler(this, "crashFactorControlAltered");
-  label3 = new GLabel(window1, 3, 170, 80, 20);
+  label3 = new GLabel(window1, 10, 140, 80, 20);
   label3.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label3.setText("crash factor");
+  label3.setText("Crash Factor");
   label3.setOpaque(false);
-  planeVelocityControl = new GCustomSlider(window1, 93, 224, 100, 40, "grey_blue");
+  planeVelocityControl = new GCustomSlider(window1, 110, 90, 100, 40, "purple18px");
   planeVelocityControl.setLimits(800.0, 100.0, 1000.0);
   planeVelocityControl.setNumberFormat(G4P.DECIMAL, 2);
+  planeVelocityControl.setLocalColorScheme(GCScheme.GOLD_SCHEME);
   planeVelocityControl.setOpaque(false);
   planeVelocityControl.addEventHandler(this, "planeVelocityControlAltered");
-  label4 = new GLabel(window1, 7, 234, 80, 20);
+  label4 = new GLabel(window1, 10, 100, 80, 20);
   label4.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
-  label4.setText("plane speed mph");
+  label4.setText("Plane Speed (mph)");
   label4.setOpaque(false);
+  label5 = new GLabel(window1, 340, 10, 80, 40);
+  label5.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label5.setText("Weather");
+  label5.setOpaque(false);
+  sunWeather = new GButton(window1, 280, 40, 80, 30);
+  sunWeather.setText("Sun");
+  sunWeather.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
+  sunWeather.addEventHandler(this, "sunWeatherSelected");
+  rainWeather = new GButton(window1, 390, 40, 80, 30);
+  rainWeather.setText("Rain");
+  rainWeather.setLocalColorScheme(GCScheme.BLUE_SCHEME);
+  rainWeather.addEventHandler(this, "rainWeatherSelected");
+  snowWeather = new GButton(window1, 280, 80, 80, 30);
+  snowWeather.setText("Snow");
+  snowWeather.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  snowWeather.addEventHandler(this, "snowWeatherSelected");
+  fogWeather = new GButton(window1, 390, 80, 80, 30);
+  fogWeather.setText("Fog");
+  fogWeather.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+  fogWeather.addEventHandler(this, "fogWeatherSelected");
+  togGroup1 = new GToggleGroup();
+  playButton = new GButton(window1, 40, 30, 80, 30);
+  playButton.setText("Pause");
+  playButton.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  playButton.addEventHandler(this, "playButtonClicked");
+  engineFailureCheckbox = new GCheckbox(window1, 10, 200, 120, 20);
+  engineFailureCheckbox.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
+  engineFailureCheckbox.setText("Bad Pilot");
+  engineFailureCheckbox.setOpaque(false);
+  engineFailureCheckbox.addEventHandler(this, "engineFailureCheckboxClicked");
+  crashFactorText = new GTextField(window1, 110, 140, 130, 20, G4P.SCROLLBARS_NONE);
+  crashFactorText.setPromptText("Number between 1-10");
+  crashFactorText.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  crashFactorText.setOpaque(true);
+  crashFactorText.addEventHandler(this, "crashFactorTextEntered");
   window1.loop();
 }
 
@@ -120,7 +194,16 @@ GCustomSlider windStrengthControl;
 GLabel label1; 
 GStick windDirControl; 
 GLabel label2; 
-GCustomSlider crashFactorControl; 
 GLabel label3; 
 GCustomSlider planeVelocityControl; 
 GLabel label4; 
+GLabel label5; 
+GButton sunWeather; 
+GButton rainWeather; 
+GButton snowWeather; 
+GButton fogWeather; 
+GToggleGroup togGroup1; 
+GButton playButton; 
+GLabel label6; 
+GCheckbox engineFailureCheckbox; 
+GTextField crashFactorText; 

@@ -8,6 +8,11 @@ float windStrength; //adjusted using GUI, 1-10
 float windTheta; //angle from positive x-axis, in increments of 45
 PVector flyIncr;
 
+String weather = "Sun";
+float weatherCrashAffectant;
+float pilotCrashAffectant;
+Raindrop[] rain = new Raindrop[500];
+
 float crashFactor;
 float exwidth;
 //float xx=0;
@@ -46,6 +51,11 @@ void setup() {
   map = loadImage("map.JPG");
   plane = loadImage("plane.png");
   
+  //weather stuff
+  for (int i=0; i<rain.length; i++) {
+    rain[i] = new Raindrop(random(width), random(height), random(5));
+  }
+  
   //filling timezones and boids array
   for (int i = -11; i < 13; i++){
     timezones[i+11] = abs(i);
@@ -59,12 +69,15 @@ void setup() {
   
   //gui stuff
   windStrength = windStrengthControl.getValueF();
-  crashFactor = crashFactorControl.getValueF();
+  if (int(crashFactorText.getText()) >= 1 && int(crashFactorText.getText()) <= 10) {
+    crashFactor = float(crashFactorText.getText())/10;
+  }
   velocity = planeVelocityControl.getValueF()/100;
 }
 
 void draw() {
   drawMap();
+  drawWeather();
   a1.display();
   a2.display();
   p1.display();
@@ -156,7 +169,7 @@ void mouseHoverCheck(Plane p) {
 
 boolean checkCrash(Plane p){
   crashNum = random(0,1);
-  if(crashNum>crashFactor){ //weird bug where ex lags and plane doesnt go back when crash factor is greater than like 0.1
+  if(crashNum>crashFactor + weatherCrashAffectant + pilotCrashAffectant){ //weird bug where ex lags and plane doesnt go back when crash factor is greater than like 0.1
     return true;
   }
   else {
@@ -169,4 +182,25 @@ void explosionAftermath(Plane p){
   crashLoop = 0;
   p.resetPlanePosition(p.origin);
   crashed = false;
+}
+
+void drawWeather() {
+  if (weather == "rain") {
+    for (int i=0; i<rain.length; i++) {
+      stroke(100, 180, 255);
+      rain[i].display("rain");
+      rain[i].update();
+      noStroke();
+    }           
+  }
+  else if (weather == "snow") {
+    for (int i=0; i<rain.length; i++) {
+      stroke(255);
+      rain[i].display("snow");
+      rain[i].update();
+      noStroke();
+    }
+  }
+  else if (weather == "fog") {
+  }
 }
