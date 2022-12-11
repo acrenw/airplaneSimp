@@ -1,4 +1,5 @@
 Boid boid;
+PVector vector1Temp, vector2Temp;
 
 class Boid{
   //fields
@@ -90,4 +91,21 @@ PVector matchVelocity(Boid b, int j){
   flockVelocity.div(numBoids-1);
     
   return flockVelocity.sub(b.velocity).div(numBoids);
+}
+
+boolean checkCollision(PVector vector1, PVector vector2){
+  boolean doesCollide = false;
+  vector1Temp.set(vector1); //to make sure the original vectors don't get overwritten
+  vector2Temp.set(vector2);
+  vector1Temp.sub(vector2Temp); //vector1Temp = the difference
+  
+  if (vector1Temp.mag() <= 2){ //if the length of vector1Temp is <= 2
+    doesCollide = true;
+  }
+  
+  else{
+    doesCollide = false;
+  }
+  
+  return doesCollide;
 }
