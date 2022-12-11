@@ -22,6 +22,7 @@ float crashNum;
 boolean crashed;
 int crashLoop = 0;
 
+int numPlane = 1;
 int numBoids = 5;
 int numGroups = 2;
 Boid[][] boidList = new Boid[numGroups][numBoids];
@@ -87,11 +88,15 @@ void draw() {
   p1.display();
   mouseHoverCheck(p1);
   
-  
-  //-----
-  //crash if hit bird
-  if (p1.hitBird()) { //change for this method to be in brids later
-    crashed = checkCrash(p1);
+  //collision with birds
+  for (int i = 0; i < numGroups; i++){
+    for (int j = 0; j < numBoids; j++){
+      for (int k = 0; k > numPlane; k++){
+        crashed = checkCollision(plane.position, boidList[i][j].position); //should be planeList[k]
+        }
+      }
+    }
+  }
     if (crashed && crashLoop <= 10) { //draws explosion, change to make it have fire and smoke
       exwidth+=10;
       noStroke();
@@ -104,7 +109,6 @@ void draw() {
       explosionAftermath(p1);
     }
   } 
-  //-----
   
   
   clockTimer += 1;
