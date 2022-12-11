@@ -28,10 +28,11 @@ Boid[][] boidList = new Boid[numGroups][numBoids];
 Boid b;
 Boid b2;
 int birdTimer = 0;
-int clockTimer = 0;int[] timezones = new int[25];
-float fade = 1;
+int clockTimer = 0;
+int[] timezones = new int[24];
 //to access what timezone you need, they go from left to right in the array
-String[] colour = {"238,99,98","254,224,144","168,214,150","96,144,159","171,138,193"};
+float fade = 1;
+String[] colour = {"168,214,150","96,144,159","171,138,193","255, 154, 66","238,99,98","254,224,144"};
 int colourLoop = 0;
 int minutes = 0;
 
@@ -141,7 +142,7 @@ void draw() {
   text("Your flight has landed at "+ random(0, timezones.length) +"h for a total of __ hours.", 30, 517);
   for (int i = 0; i < timezones.length; i++){
     colourLoop += 1;
-    if (colourLoop >= 5){
+    if (colourLoop >= 6){
       colourLoop = 0;
     }
     String[] colours = split(colour[colourLoop],",");
