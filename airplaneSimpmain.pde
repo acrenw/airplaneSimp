@@ -30,7 +30,7 @@ Boid[][] boidList = new Boid[numGroups][numBoids];
 Boid b;
 Boid b2;
 int birdTimer = 0;
-int clockTimer = 0;
+int time;
 int[] timezones = new int[24];
 //to access what timezone you need, they go from left to right in the array
 float fade = 1;
@@ -42,7 +42,7 @@ int minutes = 0;
 Airport a1 = new Airport("Toronto Pearson", 220, 220);
 Airport a2 = new Airport("Beijing Airport", 750, 250);
 
-Plane p1 = new Plane("AC 014", velocity, 6.5, a1, a2, 0.1, false);
+Plane p1 = new Plane("AC 014", velocity, a1, a2, 0.1, false);
 
 void setup() {
   size(960, 504);
@@ -98,7 +98,7 @@ void draw() {
             if (crashed == true){
               //ends the loop after it hits a bird
               i = numGroups+1;
-              j = numBoids +1;
+              j = numBoids+1;
               k = numPlane+1;
             }
           }
@@ -106,7 +106,6 @@ void draw() {
       }
     }
     if (crashed && crashLoop <= 10) { //draws explosion, change to make it have fire and smoke
-      println("hi");
       exwidth+=10;
       noStroke();
       fill(255, 80, 0, 255-3*exwidth);
@@ -118,9 +117,7 @@ void draw() {
       explosionAftermath(p1);
     }
   
-  
-  
-  clockTimer += 1;
+
   birdTimer += 1;
   for (int i = 0; i < numGroups; i++){
     for (int j = 0; j < numBoids; j++){
@@ -129,18 +126,17 @@ void draw() {
     }
   }
   
-  if (clockTimer % 5 == 0){
-    minutes += 1;
-    for (int i = 0; i < timezones.length; i++){
-      if (minutes == 60){
-        for (int j = 0; j < timezones.length; j++){
-         timezones[j] += 1;
-        }
-       minutes = 0;
+  //clocks
+  minutes += 1;
+  for (int i = 0; i < timezones.length; i++){
+    if (minutes == 60){
+      for (int j = 0; j < timezones.length; j++){
+       timezones[j] += 1;
       }
-      if (timezones[i] >= 24){
-       timezones[i] = 0;
-      }
+     minutes = 0;
+    }
+    if (timezones[i] >= 24){
+     timezones[i] = 0;
     }
   }
   
@@ -150,11 +146,13 @@ void draw() {
   fill(0);
   rect(0, 0, 960, 20);
   rect(0, height, 960, -20);
-  //if a flight lands, fade = 1; text("Your flight has landed at"...
   fade -= 0.01;
   color c = lerpColor(0, 255, fade);
   fill(c);
-  text("Your flight has landed at "+ random(0, timezones.length) +"h for a total of __ hours.", 30, 517);
+  if (p1.x == p1.destination.location.x && p1.y == p1.destination.location.y) { //if plane has reached destination
+      p1.calculatedFlightTime();
+      text(p1.calculatedFlightTime(), 30, 496);
+  }
   for (int i = 0; i < timezones.length; i++){
     colourLoop += 1;
     if (colourLoop >= 6){
@@ -165,6 +163,8 @@ void draw() {
     int g = int(colours[1]);
     int b = int(colours[2]);
     fill(r, g, b);
+    
+    //print time on screen
     if (i > 24){
       i = 0;
     }
@@ -174,8 +174,8 @@ void draw() {
     else{
       text(timezones[i]+":"+minutes+"h", ((width/24))*i+1, 15);
     }
-    //keeping h and minutes seperate to print easily, take into account
-      //while adding time together
+    //keeping h and minutes seperate to print easily
+    //take into account while adding time together
   }
   
 }
