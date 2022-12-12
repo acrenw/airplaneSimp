@@ -2,16 +2,17 @@ import g4p_controls.*;
 
 //making variables
 PImage map;
-float velocity = 60;
+float speed = 60;
 PImage plane;
 PVector planePosition;
 float windStrength; //adjusted using GUI, 1-10
-float windTheta; //angle from positive x-axis, in increments of 45
+float windTheta = 0; //angle from positive x-axis, in increments of 45
 PVector flyIncr;
+int planeTimer = 0;
 
 String weather = "Sun";
 float weatherCrashAffectant;
-float pilotCrashAffectant;
+boolean badPilot;
 Weather[] particleWeather = new Weather[500];
 Weather[] fog = new Weather[5];
 
@@ -20,7 +21,7 @@ float exwidth;
 //float xx=0;
 //float exTracker = 0;
 float crashNum;
-boolean crashed = false;
+boolean crashed;
 int crashLoop = 0;
 
 int numPlane = 1;
@@ -42,7 +43,7 @@ int minutes = 0;
 Airport a1 = new Airport("Toronto Pearson", 220, 220);
 Airport a2 = new Airport("Beijing Airport", 750, 250);
 
-Plane p1 = new Plane("AC 014", velocity, a1, a2, 0.1, false);
+Plane p1 = new Plane("AC 014", speed, 6.5, a1, a2, 0.1);
 
 void setup() {
   size(960, 504);
@@ -50,6 +51,7 @@ void setup() {
   frameRate(15);
   
   createGUI();
+  print(width/24); //= 40 pixels for each zone //huh?
   
   map = loadImage("map.JPG");
   plane = loadImage("plane.png");
@@ -78,7 +80,7 @@ void setup() {
   if (int(crashFactorText.getText()) >= 1 && int(crashFactorText.getText()) <= 10) {
     crashFactor = float(crashFactorText.getText())/10;
   }
-  velocity = planeVelocityControl.getValueF()/100;
+  speed = planeVelocityControl.getValueF()/100;
 }
 
 void draw() {
@@ -149,7 +151,7 @@ void draw() {
   fade -= 0.01;
   color c = lerpColor(0, 255, fade);
   fill(c);
-  if (p1.x == p1.destination.location.x && p1.y == p1.destination.location.y) { //if plane has reached destination
+  if (p1.x < p1.destination.location.x + 100 && p1.x > p1.destination.location.x - 100 && p1.y < p1.destination.location.y + 100 && p1.y > p1.destination.location.y - 100) { //if plane has reached destination
       p1.calculatedFlightTime();
       text(p1.calculatedFlightTime(), 30, 496);
   }
@@ -194,7 +196,7 @@ void mouseHoverCheck(Plane p) {
 
 boolean checkCrash(Plane p){
   crashNum = random(0,1);
-  if(crashNum>crashFactor + weatherCrashAffectant + pilotCrashAffectant){ //weird bug where ex lags and plane doesnt go back when crash factor is greater than like 0.1
+  if(crashNum>crashFactor + weatherCrashAffectant){ //weird bug where ex lags and plane doesnt go back when crash factor is greater than like 0.1
     return true;
   }
   else {
