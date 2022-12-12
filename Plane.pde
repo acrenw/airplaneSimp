@@ -1,36 +1,55 @@
 class Plane {
   String flightCode;
   float velocity;
-  float flightTime; //hours
+  //float flightTime; //hours
   Airport origin;
   Airport destination;
   float crashFactor; //0-1
   Boolean lightsOn;
   float x;
   float y;
+  int planeTimeT, planeTimeH, planeTimeM;
   
-  Plane (String fc, float v, float ft, Airport o, Airport d, float cf, Boolean lo) {
+  Plane (String fc, float v, Airport o, Airport d, float cf, Boolean lo) {
     this.flightCode = fc;
     this.velocity = v;
-    this.flightTime = ft;
+    //this.flightTime = ft;
     this.origin = o;
     this.destination = d;
     this.crashFactor = cf;
     this.lightsOn = lo;
     this.x = this.origin.location.x;
     this.y = this.origin.location.y;
+    this.planeTimeT = 0;
   }
 
   void speedChange() {
   }
   
   void directionChange() {
+    float direction = PI;
+    rotate(direction);   
+      // points towards this.destination.location;
   }
   
-  void display() {
+  String calculatedFlightTime(){
+    //every tick is one minute, planeTimeT increases by one for each tick
+    while (this.planeTimeT > 60){ //every 60 minutes is an hour
+      this.planeTimeT -= 60;
+      planeTimeH += 1;
+    }
+    planeTimeM = this.planeTimeT; //the rest of the minutes
+              
+    return ("Your flight from "+ this.origin.name +" to "+
+            this.destination.name + " took "+ planeTimeH +
+            " hours and "+ planeTimeM + " minutes.");
+  }
+  
+  void display() { 
     plane.resize(23, 23);
+    //rotate(PI/2); 
     image(plane, this.x, this.y);
-    
+    //rotate(0);
     drawFlightPath();
     
     if (this.x == this.origin.location.x && this.y == this.origin.location.y) { //plane is at origin
@@ -38,6 +57,7 @@ class Plane {
     }
     
     if (this.x != this.destination.location.x && this.y != this.destination.location.y) { //if plane hasnt reached destination (plane is in flight)
+      planeTimeT += 1;
       //making wind influence flight path of plane
       //calculates x and y coordinates of wind vector
       float windVectorY = abs(windStrength*sin(windTheta)/sin(90 * (PI/180)));
@@ -65,7 +85,6 @@ class Plane {
         this.y += flyIncr.y;// + velocity;
       }
     }
-    
   }
   
   PVector flyIncrement(float x1, float y1, float x2, float y2) {
@@ -114,18 +133,6 @@ class Plane {
     textSize(10);
     text(this.flightCode, this.x - 23/2 + 5, this.y-5);
   }
-  
-  //crashing stuff
-  boolean hitBird() {
-    if (this.x >= 500) { //change condition later
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  
-  
   
   void resetPlanePosition(Airport a) {
     this.x = a.location.x;
