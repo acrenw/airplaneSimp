@@ -57,7 +57,7 @@ class Plane {
     }
     
     if (this.x != this.destination.location.x && this.y != this.destination.location.y) { //if plane hasnt reached destination (plane is in flight)
-      planeTimeT += 1;
+      planeTimeT += minsPerFrame;
       //making wind influence flight path of plane
       //calculates x and y coordinates of wind vector
       float windVectorY = abs(windStrength*sin(windTheta)/sin(90 * (PI/180)));
