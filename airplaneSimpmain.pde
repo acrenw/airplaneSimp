@@ -2,6 +2,7 @@ import g4p_controls.*;
 
 //making variables
 PImage map;
+int minsPerFrame = 97;
 float velocity = 60;
 PImage plane;
 PVector planePosition;
@@ -127,13 +128,14 @@ void draw() {
   }
   
   //clocks
-  minutes += 1;
+  minutes += minsPerFrame;
   for (int i = 0; i < timezones.length; i++){
-    if (minutes == 60){
+    if (minutes >= 60){
+      minutes -= 60;
       for (int j = 0; j < timezones.length; j++){
        timezones[j] += 1;
       }
-     minutes = 0;
+     //minutes = 0;
     }
     if (timezones[i] >= 24){
      timezones[i] = 0;
@@ -148,9 +150,10 @@ void draw() {
   rect(0, height, 960, -20);
   fade -= 0.01;
   color c = lerpColor(0, 255, fade);
-  fill(c);
   if (p1.x == p1.destination.location.x && p1.y == p1.destination.location.y) { //if plane has reached destination
-      p1.calculatedFlightTime();
+      rect(30, 485, 500, 20); //covers previous text
+      fill(c);
+      p1.calculatedFlightTime(); //planes in list, p1 = planeList[i]
       text(p1.calculatedFlightTime(), 30, 496);
   }
   for (int i = 0; i < timezones.length; i++){
