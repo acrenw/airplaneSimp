@@ -1,5 +1,5 @@
 Boid boid;
-PVector vector1Temp, vector2Temp;
+PVector vector1Temp = new PVector(0,0);
 
 class Boid{
   //fields
@@ -31,11 +31,17 @@ class Boid{
     }
     
     //creating boundaries to say inside
-    if (this.position.x < 0 || this.position.x > width){
-      this.velocity.x *= -2;
+    if (this.position.x < 0){
+      this.velocity.x = abs(this.velocity.x)*2;
     }
-    if (this.position.y < 20 || this.position.y > height-20){
-      this.velocity.y *= -2;
+    else if (this.position.x > width){
+      this.velocity.x = abs(this.velocity.x)*-2;
+    }
+    else if (this.position.y < 20){
+      this.velocity.y = abs(this.velocity.y)*2;
+    }
+    else if (this.position.y > height-20){
+      this.velocity.y = abs(this.velocity.y)*-2;
     }
     
     this.position = this.position.add(this.velocity);
@@ -93,19 +99,16 @@ PVector matchVelocity(Boid b, int j){
   return flockVelocity.sub(b.velocity).div(numBoids);
 }
 
-boolean checkCollision(PVector vector1, PVector vector2){
-  boolean doesCollide = false;
-  vector1Temp.set(vector1); //to make sure the original vectors don't get overwritten
-  vector2Temp.set(vector2);
-  vector1Temp.sub(vector2Temp); //vector1Temp = the difference
+void checkCollision(PVector vector1, PVector vector2){
+  vector1Temp.set(vector1); //to make sure the original vector doesn't get overwritten
+  vector1Temp.sub(vector2); //vector1Temp = the difference of vector1 - vector2
   
-  if (vector1Temp.mag() <= 2){ //if the length of vector1Temp is <= 2
-    doesCollide = true;
+  if (vector1Temp.mag() <= 10){ //if the length of vector1Temp is <= 2
+    crashed = true;
+    println(crashed);
   }
   
   else{
-    doesCollide = false;
+    crashed = false;
   }
-  
-  return doesCollide;
 }
