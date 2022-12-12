@@ -4,6 +4,7 @@ import g4p_controls.*;
 PImage map;
 float velocity = 60;
 PImage plane;
+PVector planePosition;
 float windStrength; //adjusted using GUI, 1-10
 float windTheta; //angle from positive x-axis, in increments of 45
 PVector flyIncr;
@@ -19,7 +20,7 @@ float exwidth;
 //float xx=0;
 //float exTracker = 0;
 float crashNum;
-boolean crashed;
+boolean crashed = false;
 int crashLoop = 0;
 
 int numPlane = 1;
@@ -49,7 +50,6 @@ void setup() {
   frameRate(15);
   
   createGUI();
-  print(width/24); //= 40 pixels for each zone //huh?
   
   map = loadImage("map.JPG");
   plane = loadImage("plane.png");
@@ -89,26 +89,35 @@ void draw() {
   mouseHoverCheck(p1);
   
   //collision with birds
-  for (int i = 0; i < numGroups; i++){
-    for (int j = 0; j < numBoids; j++){
-      for (int k = 0; k > numPlane; k++){
-        crashed = checkCollision(plane.position, boidList[i][j].position); //should be planeList[k]
+  if (crashed == false){
+    for (int i = 0; i < numGroups; i++){
+      for (int j = 0; j < numBoids; j++){
+        for (int k = 0; k < numPlane; k++){
+          planePosition = new PVector(p1.x,p1.y);
+          checkCollision(planePosition, boidList[i][j].position); //should be planeList[k]
+            if (crashed == true){
+              //ends the loop after it hits a bird
+              i = numGroups+1;
+              j = numBoids +1;
+              k = numPlane+1;
+            }
+          }
         }
       }
     }
-  }
     if (crashed && crashLoop <= 10) { //draws explosion, change to make it have fire and smoke
+      println("hi");
       exwidth+=10;
       noStroke();
       fill(255, 80, 0, 255-3*exwidth);
       circle(p1.x+11, p1.y+11, exwidth);
       stroke(3);
       crashLoop ++;
-    }   
+    }
     else if (crashed && crashLoop > 10) { //explosion finished
       explosionAftermath(p1);
     }
-  } 
+  
   
   
   clockTimer += 1;
@@ -119,23 +128,25 @@ void draw() {
       b2.drawBoids(i);
     }
   }
+  
   if (clockTimer % 5 == 0){
     minutes += 1;
     for (int i = 0; i < timezones.length; i++){
-     if (minutes == 60){
-       for (int j = 0; j < timezones.length; j++){
+      if (minutes == 60){
+        for (int j = 0; j < timezones.length; j++){
          timezones[j] += 1;
-       }
+        }
        minutes = 0;
-     }
-     if (timezones[i] >= 24){
+      }
+      if (timezones[i] >= 24){
        timezones[i] = 0;
-     }
+      }
     }
   }
   
   drawWeather();
   
+  //drawing top and bottom border
   fill(0);
   rect(0, 0, 960, 20);
   rect(0, height, 960, -20);
