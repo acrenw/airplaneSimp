@@ -2,14 +2,13 @@ import g4p_controls.*;
 
 //making variables
 PImage map;
-int minsPerFrame = 97;
+int minsPerFrame = 11;
 float speed = 60;
 PImage plane;
 PVector planePosition;
 float windStrength; //adjusted using GUI, 1-10
 float windTheta = 0; //angle from positive x-axis, in increments of 45
 PVector flyIncr;
-int planeTimer = 0;
 
 String weather = "Sun";
 float weatherCrashAffectant;
@@ -34,8 +33,6 @@ PVector vector1Temp = new PVector(0,0);
 int birdTimer = 0;
 int time;
 int[] timezones = new int[24];
-//to access what timezone you need, they go from left to right in the array
-float fade = 1;
 String[] colour = {"168,214,150","96,144,159","171,138,193","255, 154, 66","238,99,98","254,224,144"};
 int colourLoop = 0;
 int minutes = 0;
@@ -111,7 +108,7 @@ void draw() {
   if (crashed == false){
     for (int i = 0; i < numGroups; i++){
       for (int j = 0; j < numBoids; j++){
-        for (int k = 0; k < numPlane; k++){
+        for (int k = 0; k < planeList.length; k++){
           try {
             planePosition = new PVector(planeList[k].x,planeList[k].y);
             checkCollision(planePosition, boidList[i][j].position);
@@ -178,14 +175,12 @@ void draw() {
   fill(0);
   rect(0, 0, 960, 20);
   rect(0, height, 960, -20);
-  fade -= 0.01;
-  color c = lerpColor(0, 255, fade);
-  
   //displays flight time
-  for(int q=0;q<planeList.length;q++){
+  for(int q = 0; q < planeList.length; q++){
     if (planeList[q].x == planeList[q].destination.location.x && planeList[q].y == planeList[q].destination.location.y) { //if plane has reached destination
+        fill(0);
         rect(30, 485, 500, 20); //covers previous text
-        fill(c);
+        fill(255);
         planeList[q].calculatedFlightTime(); //planes in list, planeList[q] = planeList[q]
         text(planeList[q].calculatedFlightTime(), 30, 496);
     }
