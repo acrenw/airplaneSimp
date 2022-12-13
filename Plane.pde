@@ -1,31 +1,33 @@
 class Plane {
+  ArrayList <Airport> myAirports;
   String flightCode;
   float velocity;
-  //float flightTime; //hours
+  float flightTime; //hours
   Airport origin;
   Airport destination;
-  float crashFactor; //0-1
-  Boolean lightsOn;
   float x;
   float y;
+  float exTracker = 0;
+  float crashProb;
   int planeTimeT, planeTimeH, planeTimeM;
   
-  Plane (String fc, float v, Airport o, Airport d, float cf, Boolean lo) {
+  Plane (String fc, float v, Airport o, Airport d) {
     this.flightCode = fc;
     this.velocity = v;
-    //this.flightTime = ft;
     this.origin = o;
     this.destination = d;
-    this.crashFactor = cf;
-    this.lightsOn = lo;
     this.x = this.origin.location.x;
     this.y = this.origin.location.y;
-    this.planeTimeT = 0;
-  }
-
-  void speedChange() {
+    this.myAirports = new ArrayList<Airport>();
   }
   
+  void addAirport(Airport a1, Airport a2){
+   
+    this.myAirports.add(a1);
+    this.myAirports.add(a2);   
+    
+  } 
+
   void directionChange() {
     float direction = PI;
     rotate(direction);   
@@ -45,21 +47,35 @@ class Plane {
             " hours and "+ planeTimeM + " minutes.");
   }
   
-  void display() { 
+  void display() {
     plane.resize(23, 23);
-    //rotate(PI/2); 
     image(plane, this.x, this.y);
-    //rotate(0);
+    
     drawFlightPath();
     
-    if (this.x == this.origin.location.x && this.y == this.origin.location.y) { //plane is at origin
-      //delay(3000); //how to dela without images disappearing??
+    //plane is at origin, pause for a bit then fly
+    if (this.x == this.origin.location.x && this.y == this.origin.location.y) { 
+      planeTimer +=1;
     }
     
-    if (this.x != this.destination.location.x && this.y != this.destination.location.y) { //if plane hasnt reached destination (plane is in flight)
-      planeTimeT += minsPerFrame;
-      //making wind influence flight path of plane
-      //calculates x and y coordinates of wind vector
+    //reset plane if out of bounds
+    if (this.x > width+10 || this.x < -10 || this.y > height+10 || this.y < -10) { 
+      resetPlanePosition(this.origin);
+    }
+    
+    //reset plane if reaches destination (plus wiggle room)
+    if (this.x < this.destination.location.x + 10 && this.x > this.destination.location.x - 10 && this.y < this.destination.location.y + 10 && this.y > this.destination.location.y -10) { 
+      planeTimer += 1;
+      
+      if (planeTimer >= 30){
+        resetPlanePosition(this.origin);
+        planeTimer = 0;
+      }
+    }
+    
+    //if plane hasnt reached destination (plane is in flight) and plane not crashed, update position
+    if (planeTimer >= 10 && this.x != this.destination.location.x && this.y != this.destination.location.y && !crashed) {
+      //calculates xy of wind vector
       float windVectorY = abs(windStrength*sin(windTheta)/sin(90 * (PI/180)));
       float windVectorX = sqrt(sq(windStrength)-sq(windVectorY));
       if (90 * (PI/180) < windTheta && windTheta < 270 * (PI/180)) {
@@ -69,22 +85,41 @@ class Plane {
         windVectorY = windVectorY*-1;
       }
       
-      //calculate and update plane path after affected by wind
-      flyIncr = flyIncrement(this.x, this.y, this.destination.location.x + windVectorX, this.destination.location.y + windVectorY); //from plane to resultant vector coordinates
-      if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
-        // update x and y values based on new calculated flight path
-        this.x += flyIncr.x;
-        this.y += flyIncr.y;
+      //calculates xy of plane velocity
+      float velocityTheta = atan((this.destination.location.x-this.x)/(this.destination.location.y-this.y));
+      float velocityY = speed*cos(velocityTheta);
+      float velocityX = speed*sin(velocityTheta);
+      if(this.destination.location.x < this.x){
+        velocityX *= -1;
+      }
+      if(this.destination.location.y < this.y){
+        velocityY *= -1;
       }
       
-      //recalculate and update path from plane to destination
-      flyIncr = flyIncrement(this.x, this.y, this.destination.location.x, this.destination.location.y); //from plane to destination
-      if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
-        // update x and y values based on new calculated flight path
-        this.x += flyIncr.x;// + velocity;  //doesn't work when i add this???
-        this.y += flyIncr.y;// + velocity;
+      //update plane position
+      if (badPilot) {
+        //bro literally makes jesus take the wheel by not doing anything at all
+        this.x += windVectorX;
+        this.y += windVectorY;
       }
+      
+      else {
+        this.x += velocityX + windVectorX;
+        this.y += velocityY + windVectorY;
+      }
+      
+      ////calculate and update plane path after affected by wind
+      //flyIncr = flyIncrement(this.x, this.y, this.destination.location.x + windVectorX, this.destination.location.y + windVectorY); //from plane to resultant vector coordinates
+      //if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
+      //  // update x and y values based on new calculated flight path
+      //  this.x += flyIncr.x;
+      //  this.y += flyIncr.y;
+      //  println("flyIncrs:",flyIncr.x, flyIncr.y);
+      //}
+      
+      
     }
+    
   }
   
   PVector flyIncrement(float x1, float y1, float x2, float y2) {
@@ -134,9 +169,22 @@ class Plane {
     text(this.flightCode, this.x - 23/2 + 5, this.y-5);
   }
   
+  //crashing stuff
+  boolean hitBird() {
+    if (this.x >= 500) { //change condition later
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  
+  
+  
   void resetPlanePosition(Airport a) {
     this.x = a.location.x;
     this.y = a.location.y;
+    planeTimer = 0;
   }
   
 }
