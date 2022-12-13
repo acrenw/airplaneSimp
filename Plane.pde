@@ -10,7 +10,9 @@ class Plane {
   PVector position;
   float exTracker = 0;
   float crashProb;
-  int planeTimeT, planeTimeH, planeTimeM;
+  int planeTimeT = 0;
+  int planeTimeH, planeTimeM;
+  int planeTimer;
   
   //constructor
   Plane (String fc, float v, Airport o, Airport d) {
@@ -29,24 +31,17 @@ class Plane {
     this.myAirports.add(a1);
     this.myAirports.add(a2);   
   } 
-
-  void directionChange() {
-    float direction = PI;
-    rotate(direction);   
-    // points towards this.destination.location;
-  }
   
   String calculatedFlightTime(){
-    //every tick is one minute, planeTimeT increases by one for each tick
     while (this.planeTimeT > 60){ //every 60 minutes is an hour
       this.planeTimeT -= 60;
-      planeTimeH += 1;
+      this.planeTimeH += 1;
     }
-    planeTimeM = this.planeTimeT; //the rest of the minutes
-              
+    this.planeTimeM = this.planeTimeT; //the rest of the minutes
+    
     return ("Your flight from "+ this.origin.name +" to "+
-            this.destination.name + " took "+ planeTimeH +
-            " hours and "+ planeTimeM + " minutes.");
+            this.destination.name + " took "+ this.planeTimeH +
+            " hours and "+ this.planeTimeM + " minutes.");
   }
   
   //draws and updates plane
@@ -58,7 +53,7 @@ class Plane {
     
     //plane is at origin, pause for a bit then fly
     if (this.x == this.origin.location.x && this.y == this.origin.location.y) { 
-      planeTimer +=1;
+      this.planeTimer +=1;
     }
     
     //reset plane if out of bounds
@@ -68,16 +63,17 @@ class Plane {
     
     //reset plane if reaches destination (plus wiggle room)
     if (this.x < this.destination.location.x + 10 && this.x > this.destination.location.x - 10 && this.y < this.destination.location.y + 10 && this.y > this.destination.location.y -10) { 
-      planeTimer += 1;
+      this.planeTimer += 1;
       
-      if (planeTimer >= 30){
+      if (this.planeTimer >= 30){
         resetPlanePosition(this.origin);
-        planeTimer = 0;
+        this.planeTimer = 0;
       }
     }
     
     //if plane hasnt reached destination (plane is in flight) and plane not crashed, update position
-    if (planeTimer >= 10 && this.x != this.destination.location.x && this.y != this.destination.location.y && !crashed) {
+    if (this.planeTimer >= 10 && this.x != this.destination.location.x && this.y != this.destination.location.y && !crashed) {
+      this.planeTimeT += minsPerFrame;
       //calculates xy of wind vector
       float windVectorY = abs(windStrength*sin(windTheta)/sin(90 * (PI/180)));
       float windVectorX = sqrt(sq(windStrength)-sq(windVectorY));
@@ -107,8 +103,14 @@ class Plane {
       }
       
       else {
-        this.x += velocityX + windVectorX;
-        this.y += velocityY + windVectorY;
+        if (this.x < this.destination.location.x + 10 && this.x > this.destination.location.x - 10 && this.y < this.destination.location.y + 10 && this.y > this.destination.location.y -10) { 
+          this.x = this.destination.location.x;
+          this.y = this.destination.location.y;
+        }
+        else{
+          this.x += velocityX + windVectorX;
+          this.y += velocityY + windVectorY;
+        }
       }  
     }
   }
@@ -164,6 +166,8 @@ class Plane {
   void resetPlanePosition(Airport a) {
     this.x = a.location.x;
     this.y = a.location.y;
-    planeTimer = 0;
+    this.planeTimeT = 0;
+    this.planeTimeH = 0;
+    this.planeTimer = 0;
   }
 }
