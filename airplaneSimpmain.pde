@@ -2,6 +2,7 @@ import g4p_controls.*;
 
 //making variables
 PImage map;
+int minsPerFrame = 97;
 float speed = 60;
 PImage plane;
 PVector planePosition;
@@ -18,7 +19,7 @@ Weather[] fog = new Weather[5];
 
 float exwidth;
 float crashNum;
-boolean crashed;
+boolean crashed = false;
 int crashLoop = 0;
 
 int numPlane = 1;
@@ -101,21 +102,23 @@ void draw() {
   mouseHoverCheck(p3);
   
   //collision with birds
-  for (int i = 0; i < numGroups; i++){
-    for (int j = 0; j < numBoids; j++){
-      for (int k = 0; k < numPlane; k++){
-        try {
-          planePosition = new PVector(p1.x,p1.y);
-          checkCollision(planePosition, boidList[i][j].position); //should be planeList[k]
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-        }
-        
-        if (crashed){
-          //ends the loop after it hits a bird
-          i = numGroups+1;
-          j = numBoids+1;
-          k = numPlane+1;
+  if (crashed == false){
+    for (int i = 0; i < numGroups; i++){
+      for (int j = 0; j < numBoids; j++){
+        for (int k = 0; k < numPlane; k++){
+          try {
+            planePosition = new PVector(p1.x,p1.y);
+            checkCollision(planePosition, boidList[i][j].position); //should be planeList[k]
+          }
+          catch (ArrayIndexOutOfBoundsException e) {
+          }
+          
+          if (crashed){
+            //ends the loop after it hits a bird
+            i = numGroups+1;
+            j = numBoids+1;
+            k = numPlane+1;
+          }
         }
       }
     }
@@ -148,13 +151,14 @@ void draw() {
   }
   
   //clocks
-  minutes += 1;
+  minutes += minsPerFrame;
   for (int i = 0; i < timezones.length; i++){
-    if (minutes == 60){
+    if (minutes >= 60){
+      minutes -= 60;
       for (int j = 0; j < timezones.length; j++){
        timezones[j] += 1;
       }
-     minutes = 0;
+     //minutes = 0;
     }
     if (timezones[i] >= 24){
      timezones[i] = 0;
@@ -169,7 +173,6 @@ void draw() {
   rect(0, height, 960, -20);
   fade -= 0.01;
   color c = lerpColor(0, 255, fade);
-  fill(c);
   
   //displays flight time
   for(int q=0;q<planeList.length;q++){
