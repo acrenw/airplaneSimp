@@ -1,6 +1,3 @@
-Boid boid;
-PVector vector1Temp = new PVector(0,0);
-
 class Boid{
   //fields
   PVector velocity;
@@ -18,7 +15,7 @@ class Boid{
     this.position = new PVector(random(100,700), random(100,500));
   }
   
-  //method
+  //methods
   void drawBoids(int j){
     this.v1 = calculateFlockCentre(this, j);
     this.v2 = stopCollision(this, j);
@@ -30,7 +27,7 @@ class Boid{
       this.velocity.div(this.velocity.mag()).mult(2); 
     }
     
-    //creating boundaries to say inside
+    //creating boundaries to stay inside
     if (this.position.x < 0){
       this.velocity.x = abs(this.velocity.x)*2;
     }

@@ -1,9 +1,11 @@
 class Airport{
+  //fields
   String name;
   PVector location;
   int w;
   int l;
   
+  //constructor
   Airport(String n, float x,float y){
     this.name = n;
     this.location = new PVector(x,y);    
@@ -11,6 +13,7 @@ class Airport{
     this.l = 30;
   }
   
+  //methods
   void display() {
     noStroke();
     //draws airport

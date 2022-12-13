@@ -1,16 +1,18 @@
 class Plane {
+  //fields
   ArrayList <Airport> myAirports;
   String flightCode;
   float velocity;
-  float flightTime; //hours
   Airport origin;
   Airport destination;
   float x;
   float y;
+  PVector position;
   float exTracker = 0;
   float crashProb;
   int planeTimeT, planeTimeH, planeTimeM;
   
+  //constructor
   Plane (String fc, float v, Airport o, Airport d) {
     this.flightCode = fc;
     this.velocity = v;
@@ -18,20 +20,20 @@ class Plane {
     this.destination = d;
     this.x = this.origin.location.x;
     this.y = this.origin.location.y;
+    this.position = new PVector(x, y);
     this.myAirports = new ArrayList<Airport>();
   }
   
+  //methods
   void addAirport(Airport a1, Airport a2){
-   
     this.myAirports.add(a1);
     this.myAirports.add(a2);   
-    
   } 
 
   void directionChange() {
     float direction = PI;
     rotate(direction);   
-      // points towards this.destination.location;
+    // points towards this.destination.location;
   }
   
   String calculatedFlightTime(){
@@ -47,6 +49,7 @@ class Plane {
             " hours and "+ planeTimeM + " minutes.");
   }
   
+  //draws and updates plane
   void display() {
     plane.resize(23, 23);
     image(plane, this.x, this.y);
@@ -106,22 +109,11 @@ class Plane {
       else {
         this.x += velocityX + windVectorX;
         this.y += velocityY + windVectorY;
-      }
-      
-      ////calculate and update plane path after affected by wind
-      //flyIncr = flyIncrement(this.x, this.y, this.destination.location.x + windVectorX, this.destination.location.y + windVectorY); //from plane to resultant vector coordinates
-      //if (!crashed) { //plane not crashed keeps going, crashed plane stops and... disappears? maybe do aprticles or smth
-      //  // update x and y values based on new calculated flight path
-      //  this.x += flyIncr.x;
-      //  this.y += flyIncr.y;
-      //  println("flyIncrs:",flyIncr.x, flyIncr.y);
-      //}
-      
-      
+      }  
     }
-    
   }
   
+  //calculates slope given any two coordinates
   PVector flyIncrement(float x1, float y1, float x2, float y2) {
     float rise = y2-y1;
     float run = x2-x1;
@@ -169,22 +161,9 @@ class Plane {
     text(this.flightCode, this.x - 23/2 + 5, this.y-5);
   }
   
-  //crashing stuff
-  boolean hitBird() {
-    if (this.x >= 500) { //change condition later
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  
-  
-  
   void resetPlanePosition(Airport a) {
     this.x = a.location.x;
     this.y = a.location.y;
     planeTimer = 0;
   }
-  
 }

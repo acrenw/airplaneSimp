@@ -22,12 +22,15 @@ float crashNum;
 boolean crashed = false;
 int crashLoop = 0;
 
-int numPlane = 1;
+int numPlane = 3;
 int numBoids = 5;
 int numGroups = 2;
 Boid[][] boidList = new Boid[100][numBoids];
 Boid b;
 Boid b2;
+Boid boid;
+PVector vector1Temp = new PVector(0,0);
+
 int birdTimer = 0;
 int time;
 int[] timezones = new int[24];
@@ -52,17 +55,19 @@ Plane p3 = new Plane("AC 474", speed, a5, a6);
 Plane []planeList = {p1,p2,p3};
 
 void setup() {
+  //basic setup
   size(960, 504);
   background(255);
   frameRate(15);
   
   createGUI();
-  print(width/24); //= 40 pixels for each zone //huh?
+  print(width/24); //= 40 pixels for each zone
   
+  //load images
   map = loadImage("map.JPG");
   plane = loadImage("plane.png");
   
-  //weather stuff
+  //making the particles for each weather state
   for (int i=0; i<particleWeather.length; i++) {
     particleWeather[i] = new Weather(random(width), random(height), random(5));
   }
@@ -81,12 +86,13 @@ void setup() {
     }
   }
   
-  //gui stuff
+  //getting initial values from gui
   windStrength = windStrengthControl.getValueF();
   speed = planeVelocityControl.getValueF()/100;
 }
 
 void draw() {
+  //drawing graphics
   drawMap();
   a1.display();
   a2.display();
@@ -107,8 +113,8 @@ void draw() {
       for (int j = 0; j < numBoids; j++){
         for (int k = 0; k < numPlane; k++){
           try {
-            planePosition = new PVector(p1.x,p1.y);
-            checkCollision(planePosition, boidList[i][j].position); //should be planeList[k]
+            planePosition = new PVector(planeList[k].x,planeList[k].y);
+            checkCollision(planePosition, boidList[i][j].position);
           }
           catch (ArrayIndexOutOfBoundsException e) {
           }
@@ -124,7 +130,7 @@ void draw() {
     }
   }
    
-  
+  //check crash and draw
   if (crashed && crashLoop <= 10) {
     exwidth+=10;
     noStroke();
@@ -137,7 +143,7 @@ void draw() {
     explosionAftermath(p1);
   }
   
-  
+  //drawing birds
   birdTimer += 1;
   for (int i = 0; i < numGroups; i++){
     for (int j = 0; j < numBoids; j++){
@@ -165,6 +171,7 @@ void draw() {
     }
   }
   
+  //draw weather below top and bottom borders but above all else
   drawWeather();
   
   //drawing top and bottom border

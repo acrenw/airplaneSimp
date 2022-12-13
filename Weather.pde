@@ -1,12 +1,15 @@
 class Weather {
+  //fields
   float x, y, z;
   
+  //constructor
   Weather(float x, float y, float z) {
     this.x = x;
     this.y = y;
     this.z = z;
   }
   
+  //methods
   void update(String type) {
     //if rain is phatter it'll fall faster, and vice versa
     float rainSpeed = map(z, 0, 5, 10, 5);
@@ -28,9 +31,10 @@ class Weather {
   }
   
   void display(String type) {
-    //th smaller z is (the closer it is to us) the phatter it'll appear
+    //the smaller z is (the closer it is to us) the phatter it'll appear
     float rainThickness = map(z, 0, 5, 3, 1);
     
+    //draws each particle based on weather type
     if (type == "rain") {
       strokeWeight(rainThickness);
       line(x, y, x, y+rainThickness*2);
